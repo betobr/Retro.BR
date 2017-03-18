@@ -6,7 +6,7 @@
 
 # When updating the version, please also update kodi-jsonschemabuilder
 # and kodi-texturepacker
-KODI_VERSION = 58145684538c94cd76bda3e5b3249c273f4caede
+KODI_VERSION = c6d0bb5de80666f551d7a199936fb3de5bf2b81d
 KODI_SITE = $(call github,xbmc,xbmc,$(KODI_VERSION))
 KODI_LICENSE = GPLv2
 KODI_LICENSE_FILES = LICENSE.GPL
@@ -153,9 +153,9 @@ KODI_CONF_OPTS += -DENABLE_IMX=OFF
 endif
 endif
 
-ifeq ($(BR2_PACKAGE_HAS_LIBUDEV),y)
+ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
 KODI_CONF_OPTS += -DENABLE_UDEV=ON
-KODI_DEPENDENCIES += libudev
+KODI_DEPENDENCIES += udev
 else
 KODI_CONF_OPTS += -DENABLE_UDEV=OFF
 endif
@@ -226,10 +226,7 @@ endif
 endif
 
 ifeq ($(BR2_PACKAGE_KODI_LIBUSB),y)
-KODI_CONF_OPTS += -DENABLE_LIBUSB=ON
 KODI_DEPENDENCIES += libusb-compat
-else
-KODI_CONF_OPTS += -DENABLE_LIBUSB=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_KODI_LIBMICROHTTPD),y)
