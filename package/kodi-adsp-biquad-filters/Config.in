@@ -1,0 +1,11 @@
+config BR2_PACKAGE_KODI_ADSP_BIQUAD_FILTERS
+	bool "kodi-adsp-biquad-filters"
+	depends on BROKEN # needs update to detect current libasplib
+	select BR2_PACKAGE_LIBASPLIB
+	select BR2_PACKAGE_LIBPLATFORM
+	select BR2_PACKAGE_KODI_PLATFORM
+	select BR2_PACKAGE_TINYXML
+	help
+	  Biquad filter addon for Kodi's AudioDSP-System
+
+	  https://github.com/kodi-adsp/adsp.biquad.filters
