@@ -15,7 +15,8 @@ HOST_KODI_TEXTUREPACKER_DEPENDENCIES += \
 	host-giflib \
 	host-libjpeg \
 	host-libpng \
-	host-lzo
+	host-lzo \
+	xmlstarlet
 
 HOST_KODI_TEXTUREPACKER_HOST_CXXFLAGS = "$(HOST_CXXFLAGS) -std=c++0x \
 	-DTARGET_POSIX -DTARGET_LINUX -D_LINUX -I$(@D)/xbmc/linux"
