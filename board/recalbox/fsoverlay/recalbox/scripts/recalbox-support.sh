@@ -10,7 +10,7 @@ then
     REPORTNAME=$(basename "$1" | sed -e s+'^\([^.]*\)\..*$'+'\1'+)
     OUTPUTFILE=$1
 else
-    REPORTNAME="batocera-support-"$(date +%Y%m%d%H%M%S)
+    REPORTNAME="retrobr-support-"$(date +%Y%m%d%H%M%S)
     OUTPUTFILE="/recalbox/share/saves/${REPORTNAME}.tar.gz"
 fi
 

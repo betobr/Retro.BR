@@ -22,7 +22,7 @@ getPer() {
 
 echo "starting the upgrade..."
 
-recalboxupdateurl="http://batocera.linux.free.fr/upgrades"
+recalboxupdateurl="http://192.168.2.109"
 systemsetting="python /usr/lib/python2.7/site-packages/configgen/settings/recalboxSettings.pyc"
 
 arch=$(cat /recalbox/recalbox.arch)
