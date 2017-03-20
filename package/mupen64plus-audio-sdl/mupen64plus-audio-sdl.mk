@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MUPEN64PLUS_AUDIO_SDL_VERSION = d9b7e7366262ee2b469f5e961e0d42785a972bdf
+MUPEN64PLUS_AUDIO_SDL_VERSION = c8680df5268fa52a5c6c8c3675668f2d18c15501
 MUPEN64PLUS_AUDIO_SDL_SITE = $(call github,mupen64plus,mupen64plus-audio-sdl,$(MUPEN64PLUS_AUDIO_SDL_VERSION))
 MUPEN64PLUS_AUDIO_SDL_LICENSE = MIT
 MUPEN64PLUS_AUDIO_SDL_DEPENDENCIES = sdl2 alsa-lib mupen64plus-core
