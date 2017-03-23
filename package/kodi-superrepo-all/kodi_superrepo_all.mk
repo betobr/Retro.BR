@@ -6,7 +6,7 @@
 
 KODI_SUPERREPO_ALL_VERSION = 0.7.04
 KODI_SUPERREPO_ALL_SOURCE = superrepo.kodi.krypton.all-$(KODI_SUPERREPO_ALL_VERSION).zip
-KODI_SUPERREPO_ALL_SITE = https://ftp.acc.umu.se/mirror/addons.superrepo.org/v7/addons/superrepo.kodi.krypton.all
+KODI_SUPERREPO_ALL_SITE = http://redirect.superrepo.org/v7/addons/superrepo.kodi.krypton.all
 KODI_SUPERREPO_ALL_PLUGINNAME=superrepo.kodi.krypton.all
 
 KODI_PLUGIN_TARGET_DIR=$(TARGET_DIR)/usr/share/kodi/addons
