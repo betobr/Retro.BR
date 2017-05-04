@@ -6,21 +6,20 @@
 
 # When updating the version, please also update kodi-jsonschemabuilder
 # and kodi-texturepacker
-KODI_VERSION = c6d0bb5de80666f551d7a199936fb3de5bf2b81d
-KODI_SITE = $(call github,xbmc,xbmc,$(KODI_VERSION))
-KODI_LICENSE = GPLv2
+KODI_VERSION = 9a2b9c12cefc0b951177572e3bd46a1ea02e7e5a
+KODI_SITE = $(call github,FernetMenta,kodi-agile,$(KODI_VERSION))
+KODI_LICENSE = GPL-2.0
 KODI_LICENSE_FILES = LICENSE.GPL
 # needed for binary addons
 KODI_INSTALL_STAGING = YES
+
 KODI_DEPENDENCIES = \
 	bzip2 \
 	expat \
 	ffmpeg \
 	fontconfig \
 	freetype \
-	gmp \
 	host-gawk \
-	host-gettext \
 	host-gperf \
 	host-kodi-jsonschemabuilder \
 	host-kodi-texturepacker \
@@ -32,7 +31,6 @@ KODI_DEPENDENCIES = \
 	libcdio \
 	libcrossguid \
 	libcurl \
-	libdvdnav \
 	libfribidi \
 	libgcrypt \
 	libplist \
@@ -42,21 +40,33 @@ KODI_DEPENDENCIES = \
 	openssl \
 	pcre \
 	python \
+	rapidjson \
 	readline \
 	sqlite \
 	taglib \
 	tinyxml \
-	yajl \
 	zlib
 
-KODI_SUBDIR = project/cmake
+KODI_LIBDVDCSS_VERSION = 2f12236
+KODI_LIBDVDNAV_VERSION = 981488f
+KODI_LIBDVDREAD_VERSION = 17d99db
+
+KODI_EXTRA_DOWNLOADS = \
+	https://github.com/xbmc/libdvdcss/archive/$(KODI_LIBDVDCSS_VERSION).tar.gz \
+	https://github.com/xbmc/libdvdnav/archive/$(KODI_LIBDVDNAV_VERSION).tar.gz \
+	https://github.com/xbmc/libdvdread/archive/$(KODI_LIBDVDREAD_VERSION).tar.gz
+
+KODI_CONF_OPTS += \
+	-DLIBDVDCSS_URL=$(BR2_DL_DIR)/$(KODI_LIBDVDCSS_VERSION).tar.gz \
+	-DLIBDVDNAV_URL=$(BR2_DL_DIR)/$(KODI_LIBDVDNAV_VERSION).tar.gz \
+	-DLIBDVDREAD_URL=$(BR2_DL_DIR)/$(KODI_LIBDVDREAD_VERSION).tar.gz
 
 KODI_CONF_OPTS += \
 	-DENABLE_CCACHE=OFF \
 	-DENABLE_DVDCSS=ON \
 	-DENABLE_INTERNAL_CROSSGUID=OFF \
 	-DENABLE_INTERNAL_FFMPEG=OFF \
-	-DKODI_DEPENDSBUILD=ON \
+	-DKODI_DEPENDSBUILD=OFF \
 	-DENABLE_OPENSSL=ON \
 	-DNATIVEPREFIX=$(HOST_DIR)/usr \
 	-DDEPENDS_PATH=$(@D) \
@@ -66,6 +76,14 @@ ifeq ($(BR2_aarch64),y)
 KODI_CONF_OPTS += -DWITH_ARCH=aarch64 -DWITH_CPU=aarch64
 else ifeq ($(BR2_arm)$(BR2_armeb),y)
 KODI_CONF_OPTS += -DWITH_ARCH=arm -DWITH_CPU=arm
+else ifeq ($(BR2_mips),y)
+KODI_CONF_OPTS += -DWITH_ARCH=mips -DWITH_CPU=mips
+else ifeq ($(BR2_mips64el),y)
+KODI_CONF_OPTS += -DWITH_ARCH=mips64 -DWITH_CPU=mips64
+else ifeq ($(BR2_powerpc64)$(BR2_powerpc64le),y)
+KODI_CONF_OPTS += -DWITH_ARCH=powerpc64 -DWITH_CPU=powerpc64
+else ifeq ($(BR2_i386),y)
+KODI_CONF_OPTS += -DWITH_ARCH=i486-linux -DWITH_CPU=$(BR2_GCC_TARGET_ARCH)
 else ifeq ($(BR2_x86_64),y)
 KODI_CONF_OPTS += -DWITH_ARCH=x86_64-linux -DWITH_CPU=x86_64
 endif
@@ -125,14 +143,6 @@ else
 KODI_CONF_OPTS += -DENABLE_MYSQLCLIENT=OFF
 endif
 
-ifeq ($(BR2_PACKAGE_KODI_NONFREE),y)
-KODI_CONF_OPTS += -DENABLE_NONFREE=ON
-KODI_LICENSE := $(KODI_LICENSE), unrar
-KODI_LICENSE_FILES += lib/UnrarXLib/license.txt
-else
-KODI_CONF_OPTS += -DENABLE_NONFREE=OFF
-endif
-
 ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
 KODI_CONF_OPTS += -DCORE_SYSTEM_NAME=rbpi
 KODI_DEPENDENCIES += rpi-userland
@@ -153,11 +163,15 @@ KODI_CONF_OPTS += -DENABLE_IMX=OFF
 endif
 endif
 
-ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
+ifeq ($(BR2_PACKAGE_HAS_LIBUDEV),y)
 KODI_CONF_OPTS += -DENABLE_UDEV=ON
-KODI_DEPENDENCIES += udev
+KODI_DEPENDENCIES += libudev
 else
 KODI_CONF_OPTS += -DENABLE_UDEV=OFF
+ifeq ($(BR2_PACKAGE_KODI_LIBUSB),y)
+KODI_CONF_OPTS += -DENABLE_LIBUSB=ON
+KODI_DEPENDENCIES += libusb-compat
+endif
 endif
 
 ifeq ($(BR2_PACKAGE_LIBCAP),y)
@@ -167,9 +181,9 @@ else
 KODI_CONF_OPTS += -DENABLE_CAP=OFF
 endif
 
-ifeq ($(BR2_PACKAGE_LIBXSLT),y)
+ifeq ($(BR2_PACKAGE_LIBXML2)$(BR2_PACKAGE_LIBXSLT),yy)
 KODI_CONF_OPTS += -DENABLE_XSLT=ON
-KODI_DEPENDENCIES += libxslt
+KODI_DEPENDENCIES += libxml2 libxslt
 else
 KODI_CONF_OPTS += -DENABLE_XSLT=OFF
 endif
@@ -205,10 +219,6 @@ else
 KODI_CONF_OPTS += -DENABLE_ALSA=OFF
 endif
 
-# quote from kodi/configure.in: "GLES overwrites GL if both set to yes."
-# we choose the opposite because opengl offers more features, like libva support
-# GL means X11, and under X11, Kodi needs libdrm; libdrm is forcefully selected
-# by a modular Xorg server, which Kodi already depends on.
 ifeq ($(BR2_PACKAGE_KODI_GL_EGL),y)
 KODI_DEPENDENCIES += libegl libglu libgl xlib_libX11 xlib_libXext \
 	xlib_libXrandr libdrm
@@ -217,16 +227,12 @@ else
 KODI_CONF_OPTS += -DENABLE_OPENGL=OFF -DENABLE_X11=OFF
 ifeq ($(BR2_PACKAGE_KODI_EGL_GLES),y)
 KODI_DEPENDENCIES += libegl libgles
-KODI_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) `$(PKG_CONFIG_HOST_BINARY) --cflags --libs egl`"
-KODI_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) `$(PKG_CONFIG_HOST_BINARY) --cflags --libs egl`"
+KODI_CONF_OPTS += -DCMAKE_CXX_FLAGS="$(TARGET_CXXFLAGS) `$(PKG_CONFIG_HOST_BINARY) --cflags --libs egl`"
+KODI_CONF_OPTS += -DCMAKE_C_FLAGS="$(TARGET_CFLAGS) `$(PKG_CONFIG_HOST_BINARY) --cflags --libs egl`"
 KODI_CONF_OPTS += -DENABLE_OPENGLES=ON
 else
 KODI_CONF_OPTS += -DENABLE_OPENGLES=OFF
 endif
-endif
-
-ifeq ($(BR2_PACKAGE_KODI_LIBUSB),y)
-KODI_DEPENDENCIES += libusb-compat
 endif
 
 ifeq ($(BR2_PACKAGE_KODI_LIBMICROHTTPD),y)
@@ -264,13 +270,6 @@ else
 KODI_CONF_OPTS += -DENABLE_AIRTUNES=OFF
 endif
 
-ifeq ($(BR2_PACKAGE_KODI_LIBSSH),y)
-KODI_DEPENDENCIES += libssh
-KODI_CONF_OPTS += -DENABLE_SSH=ON
-else
-KODI_CONF_OPTS += -DENABLE_SSH=OFF
-endif
-
 ifeq ($(BR2_PACKAGE_KODI_AVAHI),y)
 KODI_DEPENDENCIES += avahi
 KODI_CONF_OPTS += -DENABLE_AVAHI=ON
@@ -283,6 +282,13 @@ KODI_DEPENDENCIES += libcec
 KODI_CONF_OPTS += -DENABLE_CEC=ON
 else
 KODI_CONF_OPTS += -DENABLE_CEC=OFF
+endif
+
+ifeq ($(BR2_PACKAGE_KODI_LCMS2),y)
+KODI_DEPENDENCIES += lcms2
+KODI_CONF_OPTS += -DENABLE_LCMS2=ON
+else
+KODI_CONF_OPTS += -DENABLE_LCMS2=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_KODI_LIRC),y)
